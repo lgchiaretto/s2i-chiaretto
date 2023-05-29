@@ -1,16 +1,19 @@
-FROM registry.access.redhat.com/ubi8/ubi:latest
-LABEL maintainer="chiaretto@redhat.com"
+# Use UBI 8 as the base image
+FROM registry.access.redhat.com/ubi8/ubi
 
-RUN dnf update -y && dnf install -y nginx
+# Update the image and install required packages
+RUN yum update -y && \
+    yum install -y httpd && \
+    yum clean all
 
-# Define mountable directories.
-VOLUME ["/etc/nginx/sites-enabled", "/etc/nginx/certs", "/etc/nginx/conf.d", "/var/log/nginx", "/var/www/html"]
-
+# Copy the index.html file to the default Apache document root
 COPY files/index.html /var/www/html/
 
-# Define working directory.
-WORKDIR /etc/nginx
+# Configure Apache to use SSL
+RUN sed -i 's/Listen 80/Listen 8080/g' /etc/httpd/conf/httpd.conf
 
+# Expose ports 8080 and 443
 EXPOSE 8080
 
-CMD ["nginx", "-g", "daemon off;"]
+# Start Apache service
+CMD ["/usr/sbin/httpd", "-DFOREGROUND"]
