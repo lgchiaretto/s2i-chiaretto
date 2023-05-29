@@ -1,4 +1,4 @@
-FROM FROM registry.access.redhat.com/ubi8/ubi:latest
+FROM registry.access.redhat.com/ubi8/ubi:latest
 LABEL maintainer="chiaretto@redhat.com"
 
 RUN dnf update -y && dnf install -y nginx
